@@ -1,4 +1,3 @@
-
 function loadEvents(){
   generateBtn.addEventListener('click', generatePin)
   saveBtn.addEventListener('click', save)

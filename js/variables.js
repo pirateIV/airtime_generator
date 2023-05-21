@@ -1,3 +1,5 @@
+// Variables
+
 const networkOption = document.getElementById('network');
 const amount = document.getElementById('amount');
 const generateBtn = document.getElementById('generate')
