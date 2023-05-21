@@ -62,14 +62,14 @@ function generatePin(){
 
 function checkSelection(){
   if(networkOption.value && amount.value){
-
+    
     // Enable the save button
     saveBtn.style.display = 'inline-block'
     generateBtn.addEventListener('click', ()=>{
       genInput.classList.add('green')
-      error.innerHTML = ''
     })
 
+    error.innerHTML = ''
 
     // error.innerHTML = ''
     genInput.classList.remove('red')
@@ -84,20 +84,14 @@ function checkSelection(){
     console.log(true)
   }
    else {
-
     // Disable the save button
     saveBtn.style.display = 'none'
 
     genInput.value = ''
     generateBtn.addEventListener('click', ()=>{
       genInput.classList.add('red')
-      error.classList.add('small')
-      error.classList.add('text-danger')
-        error.innerHTML = 'select network and amount!'
         setInterval(() => {
-          error.innerHTML = ''
-          error.classList.remove('small')
-          genInput.classList.remove('red')
+        genInput.classList.remove('red')
         }, 3500);
     })
     
@@ -112,8 +106,8 @@ let selAmount = amount.value
 
 
 function save(){
-  
   saveBtn.style.display = 'none'
+
   let value = {
     network: networkOption.value,
     date: recentDate.toLocaleDateString(),
@@ -125,40 +119,52 @@ function save(){
  
   tablePinArray.push(value)
   savedPin.value = genInput.value
+
+  if(savedPin.value ===  genInput.value){
+    generateBtn.addEventListener('click', ()=>{
+      genInput.classList.add('red')
+      error.innerHTML = 'pin already saved,' + ' <span style="color: red;">cannot regenerate...</span>'
+      error.classList.add('small')
+      error.classList.add('text-success')
+
+      setTimeout(() => {
+        genInput.classList.remove('green')
+        error.innerHTML = ''
+      }, 5000);
+    })
+  }
   genInput.value = ''
 
   // reset to to default
   networkOption.value = ''
-  genInput.classList.remove('green')
   amount.value = ''
+
+  // genInput.classList.remove('green')
 
   console.log(value)
   displayRechargeData()
-
 }
 
 function displayRechargeData(){
    
   // tablePinArray.push(value)
   tableDisplay.innerHTML = ''
-  tablePinArray.forEach((value, index)=>{
+  tablePinArray.forEach((component, index)=>{
     tableDisplay.innerHTML += `
       <tr class="text-center table-light">
         <td>${index + 1}</td>
-        <td>${value.network}</td>
-        <td>${value.date}</td>
-        <td>${value.amount}</td>
-        <td>${value.pin}</td>
-        <td>${value.status}</td>
+        <td>${component.network}</td>
+        <td>${component.date}</td>
+        <td>${component.amount}</td>
+        <td>${component.pin}</td>
+        <td>${component.status}</td>
         <td></td>
       </tr>
     `
   })
 }
 
-function recharge(){
 
-}
 
 getRandomCardPin()
 loadEvents()
