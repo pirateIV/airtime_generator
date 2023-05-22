@@ -3,6 +3,7 @@ function loadEvents(){
   saveBtn.addEventListener('click', save)
 }
 
+// Random Pin Number
 function getRandomCardPin(){
   let PIN = ''
 
@@ -12,6 +13,7 @@ function getRandomCardPin(){
   return PIN
 }
 
+// Return the Random Number
 function generatePin(){
   networkOption.addEventListener('change', selNetwork)
 
@@ -43,28 +45,28 @@ function generatePin(){
 
   selNetwork()
   getRandomCardPin()
+  console.log(getRandomCardPin()
+  )
 }
 
+// Check if the Network and Amount are selected
 function checkSelection(){
+  genInput.classList.remove('red')
+
   if(networkOption.value && amount.value){
     
     // Enable the save button
-    saveBtn.style.display = 'inline-block'
-    generateBtn.addEventListener('click', ()=>{
-      error.classList.add('')
-      genInput.classList.add('green')
-    })
+     saveBtn.style.display = 'inline-block'
 
+    // success.classList.remove('text-danger')
     error.innerHTML = ''
-
-    // error.innerHTML = ''
-    genInput.classList.remove('red')
+    generateBtn.addEventListener('click', ()=>{
     genInput.classList.add('green')
-    
-    // add classes to message
-    // error.classList.remove('text-danger')
-    // error.classList.add('text-success')
-    // error.classList.add('small')
+      setTimeout(() => {  
+        genInput.classList.remove('green')
+        success.innerHTML = ''
+      }, 5000);
+    })
 
 
     console.log(true)
@@ -76,7 +78,12 @@ function checkSelection(){
     genInput.value = ''
     generateBtn.addEventListener('click', ()=>{
       genInput.classList.add('red')
+      error.classList.add('text-danger')
+      error.classList.add('small')
+      error.innerHTML = 'Enter network and amount!'
         setInterval(() => {
+        error.style.display = 'none'
+        error.innerHTML = ''
         genInput.classList.remove('red')
         }, 3500);
     })
@@ -87,10 +94,16 @@ function checkSelection(){
 
 checkSelection()
 
-let tablePinArray = []
 let selAmount = amount.value
 
+let tablePinArray = []
+if (localStorage.getItem('tablePinArray')) {
+  tablePinArray = JSON.parse(localStorage.getItem('tablePinArray'))
 
+  displayRechargeData()
+}
+
+// Save data
 function save(){
   saveBtn.style.display = 'none'
 
@@ -104,21 +117,24 @@ function save(){
   }
  
   tablePinArray.push(value)
+
+  // Store the updated array in local storage
+  localStorage.setItem('tablePinArray', JSON.stringify(tablePinArray))
   savedPin.value = genInput.value
 
-  if(savedPin.value ===  genInput.value){
+  // if(savedPin.value ===  genInput.value){
     generateBtn.addEventListener('click', ()=>{
       genInput.classList.add('red')
-      error.innerHTML = 'pin already saved,' + ' <span style="color: red;">cannot regenerate...</span>'
-      error.classList.add('small')
-      error.classList.add('text-success')
+      errorTwo.innerHTML = 'pin already saved,' + ' <span style="color: red;">cannot regenerate...</span>'
+      errorTwo.classList.add('small')
+      errorTwo.classList.add('text-success')
 
       setTimeout(() => {
         genInput.classList.remove('green')
-        error.innerHTML = ''
+        errorTwo.innerHTML = ''
       }, 5000);
     })
-  }
+  // }
   genInput.value = ''
 
   // reset to to default
@@ -131,6 +147,7 @@ function save(){
   displayRechargeData()
 }
 
+// Show results in document
 function displayRechargeData(){
    
   // tablePinArray.push(value)
@@ -150,6 +167,9 @@ function displayRechargeData(){
   })
 }
 
+function recharge(){
+  
+}
 
 
 getRandomCardPin()
