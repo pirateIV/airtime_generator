@@ -167,7 +167,7 @@ function displayRechargeData(){
   })
 }
 
-function recharge(){
+function recharge(e){
   
 }
 
