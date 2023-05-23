@@ -1,3 +1,21 @@
+const generateBtn = document.getElementById('generate')
+// Variables
+
+const networkOption = document.getElementById('network');
+const amount = document.getElementById('amount');
+
+const saveBtn = document.getElementById('saveBtn')
+const genInput = document.getElementById('genePin')
+
+
+let pin;
+let selected = true;
+let recentDate = new Date() 
+
+let selPin = document.getElementById('selPin')
+let networkProv = document.getElementById('networkProv')
+const savedPin = document.getElementById('savePin')
+
 function loadEvents(){
   generateBtn.addEventListener('click', generatePin)
   saveBtn.addEventListener('click', save)
@@ -92,24 +110,26 @@ function checkSelection(){
   }
 }
 
-checkSelection()
+// checkSelection()
 
 let selAmount = amount.value
 
 let tablePinArray = []
-if (localStorage.getItem('tablePinArray')) {
-  tablePinArray = JSON.parse(localStorage.getItem('tablePinArray'))
+if (localStorage.getItem('tableArray')) {
+  tablePinArray = JSON.parse(localStorage.getItem('tableArray'))
 
+  // delItem()
   displayRechargeData()
 }
 
 // Save data
 function save(){
   saveBtn.style.display = 'none'
+  savedPin.removeAttribute("readonly", "")
 
   let value = {
     network: networkOption.value,
-    date: recentDate.toLocaleDateString(),
+    date: `${recentDate.toLocaleDateString()},  ${recentDate.toLocaleTimeString()}`,
     amount: amount.value,
     pin: pin,
     status: 'UNUSED',
@@ -119,10 +139,10 @@ function save(){
   tablePinArray.push(value)
 
   // Store the updated array in local storage
-  localStorage.setItem('tablePinArray', JSON.stringify(tablePinArray))
-  savedPin.value = genInput.value
+  localStorage.setItem('tableArray', JSON.stringify(tablePinArray))
+  savedPin.value = pin
 
-  // if(savedPin.value ===  genInput.value){
+  if(savedPin.value ===  genInput.value){
     generateBtn.addEventListener('click', ()=>{
       genInput.classList.add('red')
       errorTwo.innerHTML = 'pin already saved,' + ' <span style="color: red;">cannot regenerate...</span>'
@@ -134,7 +154,7 @@ function save(){
         errorTwo.innerHTML = ''
       }, 5000);
     })
-  // }
+  }
   genInput.value = ''
 
   // reset to to default
@@ -159,15 +179,24 @@ function displayRechargeData(){
         <td>${component.network}</td>
         <td>${component.date}</td>
         <td>${component.amount}</td>
-        <td>${component.pin}</td>
+        <td onclick="copyAndPaste(item)" id="copy">${component.pin}</td>
         <td>${component.status}</td>
-        <td></td>
+        <td><a class="btn border-0 rounded-0 bg-danger" onclick="delItem(${index})">Delete</a></td>
       </tr>
     `
   })
 }
 
+function delItem(index){
+  tablePinArray.splice(index, 1)
+
+  localStorage.setItem('tableArray', JSON.stringify(tablePinArray))
+  displayRechargeData()
+}
+
 function recharge(e){
+  e = savedPin.value
+
   
 }
 
