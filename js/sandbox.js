@@ -1,4 +1,5 @@
 const generateBtn = document.getElementById('generate')
+const rechargeBtn = document.getElementById('rechargeBtn')
 // Variables
 
 const networkOption = document.getElementById('network');
@@ -95,12 +96,12 @@ function checkSelection(){
 
     genInput.value = ''
     generateBtn.addEventListener('click', ()=>{
-      genInput.classList.add('red')
-      error.classList.add('text-danger')
-      error.classList.add('small')
+      // genInput.classList.add('red')
+      // error.classList.add('text-danger')
+      // error.classList.add('small')
       error.innerHTML = 'Enter network and amount!'
         setInterval(() => {
-        error.style.display = 'none'
+        // error.style.display = 'none'
         error.innerHTML = ''
         genInput.classList.remove('red')
         }, 3500);
@@ -108,6 +109,7 @@ function checkSelection(){
     
     console.log(false)
   }
+  
 }
 
 // checkSelection()
@@ -135,6 +137,7 @@ function save(){
     status: 'UNUSED',
     // delete: 
   }
+  // recharge()
  
   tablePinArray.push(value)
 
@@ -179,7 +182,7 @@ function displayRechargeData(){
         <td>${component.network}</td>
         <td>${component.date}</td>
         <td>${component.amount}</td>
-        <td onclick="copyAndPaste(item)" id="copy">${component.pin}</td>
+        <td>${component.pin}</td>
         <td>${component.status}</td>
         <td><a class="btn border-0 rounded-0 bg-danger" onclick="delItem(${index})">Delete</a></td>
       </tr>
@@ -194,12 +197,31 @@ function delItem(index){
   displayRechargeData()
 }
 
-function recharge(e){
-  e = savedPin.value
+function recharge(){
+  const items = JSON.parse(localStorage.getItem('tableArray'))
 
-  
-}
+  items.forEach((item) => {
+    if(item.status === 'UNUSED' && item.pin === savedPin.value){
+      item.status = 'USED'
+    }
+    else if (item.status === 'USED' && item.pin === savedPin.value){
+      alert('This pin has been used')
+    }
+    // else if(!(savedPin.value)){
+    //   console.log('Invalid Pin')
+    // }
+    console.log(item)
+  })
 
+  // Update the modified array in local storage
+localStorage.setItem('tableArray', JSON.stringify(items))
+} 
+
+// recharge()
+rechargeBtn.addEventListener('click', ()=>{
+  // recharge()
+  displayRechargeData()
+})
 
 getRandomCardPin()
 loadEvents()
