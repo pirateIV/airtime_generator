@@ -215,6 +215,7 @@ function recharge(){
 
   // Update the modified array in local storage
 localStorage.setItem('tableArray', JSON.stringify(items))
+window.location.reload()
 } 
 
 // recharge()
