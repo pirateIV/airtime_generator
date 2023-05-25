@@ -64,8 +64,7 @@ function generatePin(){
 
   selNetwork()
   getRandomCardPin()
-  console.log(getRandomCardPin()
-  )
+  
 }
 
 // Check if the Network and Amount are selected
@@ -200,29 +199,36 @@ function delItem(index){
 function recharge(){
   const items = JSON.parse(localStorage.getItem('tableArray'))
 
+  let pinFound = false
+
   items.forEach((item) => {
     if(item.status === 'UNUSED' && item.pin === savedPin.value){
+
+      // Recharge successful
+      alert('Recharge successful!')
       item.status = 'USED'
+      pinFound = true
     }
     else if (item.status === 'USED' && item.pin === savedPin.value){
       alert('This pin has been used')
+      pinFound = true
     }
-    // else if(!(savedPin.value)){
-    //   console.log('Invalid Pin')
-    // }
-    console.log(item)
+    
+    
   })
-
+  if(!pinFound){
+    alert('Invalid pin')
+  }
+    displayRechargeData()
   // Update the modified array in local storage
 localStorage.setItem('tableArray', JSON.stringify(items))
-window.location.reload()
 } 
 
 // recharge()
-rechargeBtn.addEventListener('click', ()=>{
-  // recharge()
-  displayRechargeData()
-})
+// rechargeBtn.addEventListener('click', ()=>{
+//   recharge()  
+//   // displayRechargeData()
+// })
 
 getRandomCardPin()
 loadEvents()
