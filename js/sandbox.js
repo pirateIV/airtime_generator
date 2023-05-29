@@ -22,6 +22,7 @@ function loadEvents(){
   saveBtn.addEventListener('click', save)
 }
 
+
 // Random Pin Number
 function getRandomCardPin(){
   let PIN = ''
@@ -146,10 +147,6 @@ function save(){
 
   if(savedPin.value ===  genInput.value){
     generateBtn.addEventListener('click', ()=>{
-      genInput.classList.add('red')
-      errorTwo.innerHTML = 'pin already saved,' + ' <span style="color: red;">cannot regenerate...</span>'
-      errorTwo.classList.add('small')
-      errorTwo.classList.add('text-success')
 
       setTimeout(() => {
         genInput.classList.remove('green')
@@ -197,38 +194,30 @@ function delItem(index){
 }
 
 function recharge(){
-  const items = JSON.parse(localStorage.getItem('tableArray'))
+  const items = tablePinArray
 
   let pinFound = false
-
-  items.forEach((item) => {
+  items.map((item) =>{
     if(item.status === 'UNUSED' && item.pin === savedPin.value){
 
-      // Recharge successful
-      alert('Recharge successful!')
+      // Recharge succcessful
       item.status = 'USED'
       pinFound = true
+      alert("Recharge successsful!")
     }
-    else if (item.status === 'USED' && item.pin === savedPin.value){
-      alert('This pin has been used')
-      pinFound = true
-    }
-    
-    
-  })
-  if(!pinFound){
-    alert('Invalid pin')
-  }
-    displayRechargeData()
-  // Update the modified array in local storage
-localStorage.setItem('tableArray', JSON.stringify(items))
-} 
+  });
 
-// recharge()
-// rechargeBtn.addEventListener('click', ()=>{
-//   recharge()  
-//   // displayRechargeData()
-// })
+  if (!pinFound){
+    alert('Invalid pin!')
+  }
+
+  displayRechargeData()
+  localStorage.setItem('tableArray', JSON.stringify(items))
+}
+
+// recharge() - not to be called outside invokes
+//              the Invalid pin alert!
+
 
 getRandomCardPin()
 loadEvents()
