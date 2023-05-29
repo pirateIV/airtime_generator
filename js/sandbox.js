@@ -197,7 +197,7 @@ function recharge(){
   const items = tablePinArray
 
   let pinFound = false
-  items.map((item) =>{
+  items.map((item, index) =>{
     if(item.status === 'UNUSED' && item.pin === savedPin.value){
 
       // Recharge succcessful
