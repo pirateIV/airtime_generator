@@ -1,5 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@200;300;400;500;600;800&display=swap");
+
 * {
-  font-family: fira sans !important;
+  font-family: "Lexend" !important;
 }
 
 small {
