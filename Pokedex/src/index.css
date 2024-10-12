@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Regular.ttf");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Medium.ttf");
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-SemiBold.ttf");
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Bold.ttf");
+    font-weight: 800;
+}
+
+@layer base {
+    :root {
+        /* Colors */
+
+        --blue: #2023EE;
+
+        --gray-100: rgb(33, 33, 33);
+        --gray-100-0\.60: #f5f5f599;
+        --gray-900: #212121;
+        --gray-900-0\.32: #21212152;
+        --gray-900-0\.60: #21212199;
+
+        --indigo-50: #E8EAF6;
+        --indigo-400: #5C6BC0;
+
+        --white-opacity-0\.08: #ffffff14;
+        --white-opacity-0\.24: #ffffff3d;
+        --white-opacity-0\.32: #ffffff52;
+    }
+}
+
+@layer components {
+    .heading-xl {
+        @apply [font-kerning:0.25px] font-bold text-[64px];
+    }
+
+    .heading-lg {
+        @apply [font-kerning:0.25px] font-semibold text-[calc(theme(fontSize.4xl)-1px)];
+    }
+
+    .heading-md {
+        @apply [font-kerning:0.25px] font-medium text-[calc(theme(fontSize.2xl)+2px)]
+    }
+
+    .heading-sm {
+        @apply [font-kerning:0.15px] font-semibold
+    }
+
+    .body-text-1 {
+        @apply [font-kerning:0.15px] font-normal text-[16px];
+    }
+
+    .body-text-2 {
+        @apply [font-kerning:0.15px] font-semibold text-[16px];
+    }
+
+    .body-text-3 {
+        @apply [font-kerning:0.25px] font-bold text-[16px];
+    }
+}
