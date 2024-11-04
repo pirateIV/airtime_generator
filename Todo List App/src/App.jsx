@@ -125,7 +125,7 @@ const App = () => {
           editingCell.columnId === "priority";
 
         return isEditing ? (
-          <select className="p-2 w-full" value={info.getValue()}>
+          <select className="p-2 *:p-2 bg-gray-300 w-full" value={info.getValue()}>
             <option value="Low" selected>
               Low
             </option>

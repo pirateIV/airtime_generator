@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Regular.ttf");
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Medium.ttf");
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-SemiBold.ttf");
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: "Nunito sans";
+    src: url("./assets/fonts/Nunito-Bold.ttf");
+    font-weight: 800;
+}
+
+@layer base {
+    :root {
+        --blue: #2023EE;
+
+        --gray-100: #F5F5F5;
+        --gray-100-060: #f5f5f599;
+        --gray-900: #212121;
+        --gray-900-032: #21212152;
+        --gray-900-060: #21212199;
+        --gray-900-087: #212121de;
+
+        --indigo-50: #E8EAF6;
+        --indigo-400: #5C6BC0;
+
+        --white-opacity-008: #ffffff14;
+        --white-opacity-024: #ffffff3d;
+        --white-opacity-032: #ffffff52;
+    }
+
+    input[type=checkbox]~label::before {
+        @apply [content:""] absolute left-0 mx-0.5 size-7 bg-[var(--indigo-400)] rounded-full transition-all -z-10;
+    }
+
+    input[type=checkbox]:not(:checked)~label::before {
+        @apply translate-x-0;
+    }
+
+    input[type=checkbox]:checked~label::before {
+        @apply translate-x-[calc(theme(translate.full)+3.5px)];
+    }
+
+    input[type=checkbox]:not(:checked)~label>button:first-child {
+        @apply text-white;
+    }
+
+    input[type=checkbox]:checked~label>button:last-child {
+        @apply text-white;
+    }
+}
+
+@layer components {
+    .max-w-screen {
+        max-width: 1400px;
+    }
+
+    .heading-xl {
+        @apply font-extrabold text-[64px];
+        color: var(--gray-900-087);
+    }
+
+    .heading-lg {
+        @apply font-semibold text-[calc(theme(fontSize.4xl)-1px)];
+        color: var(--gray-900-087);
+    }
+
+    .heading-md {
+        @apply font-medium text-[calc(theme(fontSize.2xl)+2px)]
+    }
+
+    .heading-sm {
+        @apply font-semibold
+    }
+
+    .body-text-1 {
+        @apply font-normal text-[16px];
+    }
+
+    .body-text-2 {
+        @apply font-semibold text-[16px];
+    }
+
+    .body-text-3 {
+        @apply font-bold text-[16px];
+    }
+
+}
