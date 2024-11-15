@@ -1,5 +1,5 @@
 export interface Time {
-  hour?: string;
-  minutes: string;
-  seconds: string;
+  hour?: number;
+  minutes: number;
+  seconds: number;
 }

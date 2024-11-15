@@ -12,9 +12,10 @@ const useTimerCountDown = (time: number, isSessionActive: boolean) => {
   });
 
   useEffect(() => {
+    let interval: NodeJS.Timeout;
     setTimer(formatCountdownTime(timeLeft));
 
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       if (isSessionActive) {
         clearInterval(interval);
         return;
