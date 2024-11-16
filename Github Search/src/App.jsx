@@ -1,85 +1,99 @@
-import { useEffect, useState } from "react";
-import { getRepositories, getUser } from "./services/githubService";
+import { Loader2 } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-const USER = "";
+const token = import.meta.env.VITE_GITHUB_API_TOKEN;
+
+const BASE_URL = "https://api.github.com/users";
+
+// Service functions
+const getUser = async (user) => {
+  const res = await fetch(`${BASE_URL}/${user}`, {
+    headers: {
+      Authorization: "token " + token,
+    },
+  });
+  return await res.json();
+};
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
   const [githubUser, setGithubUser] = useState(null);
-  const [repositories, setRepositories] = useState([]);
-
-  const [activeTab, setActiveTab] = useState("repositories");
 
   useEffect(() => {
     const init = async () => {
-      const user = await getUser(USER);
-      const repos = await getRepositories(USER);
+      try {
+        setLoading(true);
+        const [user] = await Promise.all([getUser("jane-does-coding")]);
 
-      setGithubUser(user);
-      setRepositories(repos);
+        setGithubUser(user);
+      } catch (error) {
+        console.error("error fetching github data:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     init();
   }, []);
-  console.log(githubUser);
 
+  if (loading) {
+    return (
+      <div className="grid place-items-center min-h-screen">
+        <Loader2 className="size-7 animate-spin text-indigo-600" />
+      </div>
+    );
+  }
   return (
-    <div className="max-w-5xl mx-auto mt-10 px-2 sm:px-6 lg:px-8">
-      <h1 className="text-5xl">Github User Profile</h1>
+    <div className="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+      <header>
+        <h1 className="text-4xl">Github User Search</h1>
+      </header>
 
-      <section className="mt-7">
-        <div className="flex flex-col gap-5 ">
-          <div>
+      <div className="mt-8">
+        <section className="flex flex-col md:flex-row gap-8">
+          {/* Profile Header */}
+          <div className="flex-shrink-0">
             <img
-              width="224"
-              height="224"
-              className="size-56 rounded-full shadow-lg"
               src={
-                "https://github.githubassets.com/images/gravatars/gravatar-user-420.png?size=40"
+                githubUser?.avatar_url ||
+                "https://github.githubassets.com/images/gravatars/gravatar-user-420.png"
               }
               alt="github user avatar"
+              className="size-48 ring-4 ring-gray-100 rounded-full"
             />
           </div>
-          <div>
-            <h1 className="font-semibold text-4xl">{githubUser?.name}</h1>
+
+          <div className="flex flex-col justify-center">
+            <h1 className="text-4xl text-gray-900 font-bold">
+              {githubUser?.name}
+            </h1>
             <a
-              href={`github.com/${githubUser?.login}`}
-              className="text-indigo-600 text-sm font-medium mt-2 hover:underline"
+              href={`https://github.com/${githubUser?.login}`}
+              className="mt-2 text-indigo-600 text-sm font-medium hover:underline"
+              rel="noopener noreferrer"
+              target="_blank"
             >
               @{githubUser?.login}
             </a>
-          </div>
-          <div className="flex items-center gap-x-3">
-            <div className="flex items-center gap-x-1.5">
-              {/* prettier-ignore */}
-              <svg text="muted" className="fill-gray-400" aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-people">
-               <path d="M2 5.5a3.5 3.5 0 1 1 5.898 2.549 5.508 5.508 0 0 1 3.034 4.084.75.75 0 1 1-1.482.235 4 4 0 0 0-7.9 0 .75.75 0 0 1-1.482-.236A5.507 5.507 0 0 1 3.102 8.05 3.493 3.493 0 0 1 2 5.5ZM11 4a3.001 3.001 0 0 1 2.22 5.018 5.01 5.01 0 0 1 2.56 3.012.749.749 0 0 1-.885.954.752.752 0 0 1-.549-.514 3.507 3.507 0 0 0-2.522-2.372.75.75 0 0 1-.574-.73v-.352a.75.75 0 0 1 .416-.672A1.5 1.5 0 0 0 11 5.5.75.75 0 0 1 11 4Zm-5.5-.5a2 2 0 1 0-.001 3.999A2 2 0 0 0 5.5 3.5Z"></path>
-              </svg>
+
+            {githubUser?.bio ? (
+              <p className="mt-5 text-gray-600">{githubUser?.bio}</p>
+            ) : (
+              <em className="mt-5 text-gray-400 text-sm">User has no bio...</em>
+            )}
+
+            <div>
               <div>
-                <span className="font-semibold">{githubUser?.followers}</span>{" "}
-                <span className="text-slate-500">followers</span>
+                <span className="font-semibold">{githubUser?.followers}</span>
+                <span className="text-gray-500">followers</span>
+              </div>
+              <div>
+                <span className="font-semibold">{githubUser?.following}</span>
+                <span className="text-gray-500">following</span>
               </div>
             </div>
-            <span className="text-gray-500">&middot;</span>
-            <div>
-              <span className="font-semibold">{githubUser?.following}</span>{" "}
-              <span className="text-slate-500">following</span>
-            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="mt-4 w-full">
-        <div className="flex items-center justify-center max-w-xs bg-gray-100 rounded-lg">
-          <button onClick={() => setActiveTab("repositories")}>
-            Repositories
-          </button>
-          <button onClick={() => setActiveTab("followers")}>Followers</button>
-          <button onClick={() => setActiveTab("following")}>Following</button>
-        </div>
-
-        {activeTab === "repositories" && <div></div>}
-        {activeTab === "followers" && <div></div>}
-        {activeTab === "following" && <div></div>}
-      </section>
+        </section>
+      </div>
     </div>
   );
 };
