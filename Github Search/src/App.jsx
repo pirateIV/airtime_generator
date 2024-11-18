@@ -8,17 +8,21 @@ import {
   getRepositories,
   getUser,
 } from "./services/ghService";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 
-const TabButton = ({ id, info, active, onClick, controls, children }) => {
+const TabButton = ({ id, info, active, onSwitchTo, controls, children }) => {
+  const [searchParams] = useSearchParams("user");
+
+  const user = searchParams.get("user");
+
   return (
-    <button
+    <Link
       id={id}
       role="tab"
-      type="button"
-      onClick={onClick}
       aria-selected={active}
       aria-controls={controls}
-      className={`flex-1 px-4 py-2 font-medium text-sm rounded-lg bg-gradient-to-b ${
+      to={`?tab=${onSwitchTo}&user=${user}`}
+      className={`flex-1 px-4 py-2 font-medium text-sm text-center rounded-lg bg-gradient-to-b ${
         active
           ? "from-indigo-400 to-indigo-600 text-white"
           : "text-gray-600 hover:text-indigo-500"
@@ -33,7 +37,7 @@ const TabButton = ({ id, info, active, onClick, controls, children }) => {
       >
         ({info})
       </span>
-    </button>
+    </Link>
   );
 };
 
@@ -63,10 +67,12 @@ const RepositoryCard = ({ repo }) => {
           </div>
         )}
         <div className="flex items-center gap-x-2 flex-1 lg:gap-x-3">
-          <div className="flex items-center gap-x-1.5 text-sm">
-            <Star className="text-gray-400 size-4" aria-hidden="true" />
-            <span className="text-gray-700">{repo.stargazers_count}</span>
-          </div>
+          {Number(repo.stargazers_count) > 0 && (
+            <div className="flex items-center gap-x-1.5 text-sm">
+              <Star className="text-gray-400 size-4" aria-hidden="true" />
+              <span className="text-gray-700">{repo.stargazers_count}</span>
+            </div>
+          )}
           {Number(repo.forks_count) > 0 && (
             <div className="flex items-center gap-x-1.5 text-sm">
               <GitForkIcon
@@ -82,26 +88,29 @@ const RepositoryCard = ({ repo }) => {
   );
 };
 
-const UserCard = ({ follower }) => {
+const UserCard = ({ user }) => {
+  const [searchParams] = useSearchParams();
+
+  const tab = searchParams.get("tab");
+
   return (
-    <div key={follower.id} className="border border-slate-300 p-3 rounded-xl">
+    <div key={user.id} className="border border-slate-300 p-3 rounded-xl">
       <div className="flex items-center justify-between">
         <div className="flex items-start gap-x-4">
           <img
-            src={follower.avatar_url}
+            src={user.avatar_url}
             className="size-10 rounded-full border-2 border-slate-300"
-            alt="follower avatar"
+            alt="user avatar"
           />
-          <button
-            href={follower.html_url}
+          <Link
+            to={`?tab=${tab}&user=${user.login}`}
             className="text-indigo-600 font-medium hover:underline"
-            onClick={() => setUsername(follower.login)}
           >
-            {follower.login}
-          </button>
+            {user.login}
+          </Link>
         </div>
         <div>
-          <a href={follower.html_url} target="_blank">
+          <a href={user.html_url} rel="noopener noferrer" target="_blank">
             <span>↗</span>
           </a>
         </div>
@@ -111,6 +120,8 @@ const UserCard = ({ follower }) => {
 };
 
 const App = () => {
+  const [searchParams] = useSearchParams();
+
   const [username, setUsername] = useState("pirateIV");
   const [githubUser, setGithubUser] = useState(null);
   const [repositories, setRepositories] = useState([]);
@@ -121,7 +132,10 @@ const App = () => {
   const [error, setError] = useState({ error: false, message: "" });
   const [activeTab, setActiveTab] = useState("repositories");
 
-  console.log(followers);
+  useEffect(() => {
+    setActiveTab(searchParams.get("tab") || "repositories");
+    setUsername(searchParams.get("user"));
+  }, [searchParams]);
 
   useEffect(() => {
     const init = async () => {
@@ -243,7 +257,7 @@ const App = () => {
               info={githubUser.public_repos}
               controls="panel-1"
               active={activeTab === "repositories"}
-              onClick={() => setActiveTab("repositories")}
+              onSwitchTo={"repositories"}
             >
               <span>Repositories</span>
             </TabButton>
@@ -252,7 +266,7 @@ const App = () => {
               info={githubUser.followers}
               controls="panel-2"
               active={activeTab === "followers"}
-              onClick={() => setActiveTab("followers")}
+              onSwitchTo={"followers"}
             >
               <span>Followers</span>
             </TabButton>
@@ -261,7 +275,7 @@ const App = () => {
               info={githubUser.following}
               controls="panel-3"
               active={activeTab === "following"}
-              onClick={() => setActiveTab("following")}
+              onSwitchTo={"following"}
             >
               <span>Following</span>
             </TabButton>
@@ -280,15 +294,15 @@ const App = () => {
             {activeTab === "followers" && (
               <div className="grid grid-cols-3 gap-5" role="tabpanel">
                 {followers?.map((follower) => (
-                  <UserCard key={follower.id} follower={follower} />
+                  <UserCard key={follower.id} user={follower} />
                 ))}
               </div>
             )}
 
             {activeTab === "following" && (
               <div className="grid grid-cols-3 gap-5" role="tabpanel">
-                {following?.map((follower) => (
-                  <UserCard key={follower.id} follower={follower} />
+                {following?.map((user) => (
+                  <UserCard key={user.id} user={user} />
                 ))}
               </div>
             )}
