@@ -132,7 +132,7 @@ const App = () => {
   const [currentTab, setCurrentTab] = useState("repositories");
 
   useEffect(() => {
-    setUsername(searchParams.get("user"));
+    setUsername(searchParams.get("user") || "pirateIV");
     setCurrentTab(searchParams.get("tab") || "repositories");
   }, [searchParams]);
 
@@ -296,6 +296,7 @@ const TabList = ({ tabs, currentTab }) => {
     >
       {tabs.map((tab, index) => (
         <TabButton
+          key={index}
           id={`tab-btn-${index}`}
           count={tab.count}
           controls={`panel-${index}`}
