@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { GitForkIcon, Loader2, Star } from "lucide-react";
 
-import People from "./components/People";
 import {
   getFollowers,
   getFollowing,
   getRepositories,
   getUser,
 } from "./services/ghService";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import People from "./components/People";
 
-const TabButton = ({ id, info, active, onSwitchTo, controls, children }) => {
+const TabButton = ({ id, count, active, onSwitchTo, controls, children }) => {
   const [searchParams] = useSearchParams("user");
 
   const user = searchParams.get("user");
@@ -21,13 +21,12 @@ const TabButton = ({ id, info, active, onSwitchTo, controls, children }) => {
       role="tab"
       aria-selected={active}
       aria-controls={controls}
-      to={`?tab=${onSwitchTo}&user=${user}`}
+      to={user ? `?tab=${onSwitchTo}&user=${user}` : `?tab=${onSwitchTo}`}
       className={`flex-1 px-4 py-2 font-medium text-sm text-center rounded-lg bg-gradient-to-b ${
         active
           ? "from-indigo-400 to-indigo-600 text-white"
           : "text-gray-600 hover:text-indigo-500"
       }`}
-      info={info}
     >
       {children}
       <span
@@ -35,7 +34,7 @@ const TabButton = ({ id, info, active, onSwitchTo, controls, children }) => {
           active ? "text-indigo-100" : "text-gray-500"
         }`}
       >
-        ({info})
+        ({count})
       </span>
     </Link>
   );
@@ -130,11 +129,11 @@ const App = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({ error: false, message: "" });
-  const [activeTab, setActiveTab] = useState("repositories");
+  const [currentTab, setCurrentTab] = useState("repositories");
 
   useEffect(() => {
-    setActiveTab(searchParams.get("tab") || "repositories");
     setUsername(searchParams.get("user"));
+    setCurrentTab(searchParams.get("tab") || "repositories");
   }, [searchParams]);
 
   useEffect(() => {
@@ -225,7 +224,7 @@ const App = () => {
                 </span>
                 <button
                   className="text-gray-600 hover:text-indigo-500"
-                  onClick={() => setActiveTab("followers")}
+                  onClick={() => setCurrentTab("followers")}
                 >
                   <span>followers</span>
                 </button>
@@ -237,7 +236,7 @@ const App = () => {
                 </span>
                 <button
                   className="text-gray-600 hover:text-indigo-500"
-                  onClick={() => setActiveTab("following")}
+                  onClick={() => setCurrentTab("following")}
                 >
                   <span>following</span>
                 </button>
@@ -248,42 +247,18 @@ const App = () => {
 
         {/* Tabs */}
         <section className="mt-10">
-          <div
-            role="tablist"
-            className="flex max-w-md mx-auto p-1 space-x-2 bg-white rounded-xl shadow-sm shadow-black/20"
-          >
-            <TabButton
-              id="tab-btn-1"
-              info={githubUser.public_repos}
-              controls="panel-1"
-              active={activeTab === "repositories"}
-              onSwitchTo={"repositories"}
-            >
-              <span>Repositories</span>
-            </TabButton>
-            <TabButton
-              id="tab-btn-2"
-              info={githubUser.followers}
-              controls="panel-2"
-              active={activeTab === "followers"}
-              onSwitchTo={"followers"}
-            >
-              <span>Followers</span>
-            </TabButton>
-            <TabButton
-              id="tab-btn-3"
-              info={githubUser.following}
-              controls="panel-3"
-              active={activeTab === "following"}
-              onSwitchTo={"following"}
-            >
-              <span>Following</span>
-            </TabButton>
-          </div>
+          <TabList
+            currentTab={currentTab}
+            tabs={[
+              { id: "repositories", count: githubUser.public_repos },
+              { id: "followers", count: githubUser.followers },
+              { id: "following", count: githubUser.following },
+            ]}
+          />
 
           {/* Tab Content */}
           <div className="mt-8">
-            {activeTab === "repositories" && (
+            {currentTab === "repositories" && (
               <div className="grid grid-cols-3 gap-5" role="tabpanel">
                 {repositories?.map((repo) => (
                   <RepositoryCard key={repo.id} repo={repo} />
@@ -291,7 +266,7 @@ const App = () => {
               </div>
             )}
 
-            {activeTab === "followers" && (
+            {currentTab === "followers" && (
               <div className="grid grid-cols-3 gap-5" role="tabpanel">
                 {followers?.map((follower) => (
                   <UserCard key={follower.id} user={follower} />
@@ -299,7 +274,7 @@ const App = () => {
               </div>
             )}
 
-            {activeTab === "following" && (
+            {currentTab === "following" && (
               <div className="grid grid-cols-3 gap-5" role="tabpanel">
                 {following?.map((user) => (
                   <UserCard key={user.id} user={user} />
@@ -309,6 +284,27 @@ const App = () => {
           </div>
         </section>
       </div>
+    </div>
+  );
+};
+
+const TabList = ({ tabs, currentTab }) => {
+  return (
+    <div
+      role="tablist"
+      className="flex max-w-md mx-auto p-1 space-x-2 bg-white rounded-xl shadow-sm shadow-black/20"
+    >
+      {tabs.map((tab, index) => (
+        <TabButton
+          id={`tab-btn-${index}`}
+          count={tab.count}
+          controls={`panel-${index}`}
+          active={currentTab === tab.id}
+          onSwitchTo={tab.id}
+        >
+          <span className="capitalize">{tab.id}</span>
+        </TabButton>
+      ))}
     </div>
   );
 };
